@@ -421,15 +421,17 @@ def cornersHeuristic(state, problem):
     unvisited_corner = [corner for corner in corners if corner not in visited_corners]
     for corner in unvisited_corner:
         heuristic_value = min(heuristic_value, abs(place[0] - corner[0]) + abs(place[1] - corner[1]))
-        print "heurisvvvvv", heuristic_value
+        # print "heurisvvvvv", heuristic_value
         # if corner in visited_corners:
         #     pass
         '''next step is the key'''
     if heuristic_value == 9999999:
         heuristic_value = 0
-    print heuristic_value,"+    ",len(unvisited_corner)
-
-    return heuristic_value + len(unvisited_corner)* 50# the key parameter
+    # print heuristic_value,"+    ",len(unvisited_corner)
+    length = abs(corners[0][0] - corners[1][0]) + abs(corners[0][1] - corners[1][1])
+    breadth = abs(corners[1][0] - corners[2][0]) + abs(corners[1][1] - corners[2][1])
+    print length * breadth
+    return heuristic_value + len(unvisited_corner)* (length * breadth / 2) #length ^ 2# the key parameter
 
 
 
