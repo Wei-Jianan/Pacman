@@ -243,11 +243,11 @@ def aStarSearch(problem, heuristic=nullHeuristic):
     import util
 
     def f(path, place):
-        return len(path) + searchAgents.manhattanHeuristic(place, problem)
+        return len(path) + heuristic(place, problem)
     current_node = [problem.getStartState(), []]
     frontier = util.PriorityQueue()
     frontier.push(current_node,f([],current_node[0]))
-    explored = set()
+    explored = []
     successor = None
     min_cost_path = []
     if problem.isGoalState(current_node[0]):
@@ -262,7 +262,7 @@ def aStarSearch(problem, heuristic=nullHeuristic):
         current_path = current_node[1]
         if problem.isGoalState(current_place):
             min_cost_path = current_path
-        explored.add(current_place)
+        explored.append(current_place)
         if min_cost_path == []:
             successor = problem.getSuccessors(current_place)
             # print current_node

@@ -420,7 +420,7 @@ def cornersHeuristic(state, problem):
     visited_corners = state[1]
     for corner in corners:
         if corner not in visited_corners:
-            heuristic_value += util.manhattanDistance(place, corner)
+            heuristic_value += abs(place[0] - corner[0]) + abs(place[1] - corner[1])
         if corner in visited_corners:
             pass
 
