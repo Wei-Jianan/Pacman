@@ -416,17 +416,49 @@ def cornersHeuristic(state, problem):
     !!!!!!!!!!!!!!!!!!!!!!!!!!'''
     import util
     place = state[0]
-    heuristic_value = 0
+    heuristic_value = 9999999
     visited_corners = state[1]
-    for corner in corners:
-        if corner not in visited_corners:
-            heuristic_value += abs(place[0] - corner[0]) + abs(place[1] - corner[1])
-        if corner in visited_corners:
-            pass
+    unvisited_corner = [corner for corner in corners if corner not in visited_corners]
+    for corner in unvisited_corner:
+        heuristic_value = min(heuristic_value, abs(place[0] - corner[0]) + abs(place[1] - corner[1]))
+        print "heurisvvvvv", heuristic_value
+        # if corner in visited_corners:
+        #     pass
+        '''next step is the key'''
+    if heuristic_value == 9999999:
+        heuristic_value = 0
+    print heuristic_value,"+    ",len(unvisited_corner)
 
-    print heuristic_value
+    return heuristic_value + len(unvisited_corner)* 50# the key parameter
 
-    return heuristic_value # Default to trivial solution
+
+
+
+
+
+    # place = state[0]
+    # manhttan_value = 999999
+    # visited_corners = state[1]
+    # distence_among_unvisited_corner = 0
+    # unvisited_corner = [corner for corner in corners if corner not in visited_corners]
+    # if_first_corner_visited = False
+    # last_corner = None
+    # n_unvisited =0
+    # for corner in unvisited_corner:
+    #     manhttan_value = min(manhttan_value, abs(place[0] - corner[0]) + abs(place[1] - corner[1]))
+    #     if if_first_corner_visited:
+    #         distence_among_unvisited_corner += abs(last_corner[0] - corner[0]) + abs(last_corner[1] - corner[1])
+    #     else:
+    #         if_first_corner_visited = True
+    #     n_unvisited += 1
+    #     last_corner = corner
+    # # distence_among_unvisited_corner = n_unvisited * 11
+    # heuristic_value = distence_among_unvisited_corner *100 + manhttan_value
+    #
+    # print distence_among_unvisited_corner, '+', manhttan_value, "=", heuristic_value
+    # return heuristic_value  # Default to trivial solution
+
+
 
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
