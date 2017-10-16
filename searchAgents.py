@@ -431,7 +431,7 @@ def cornersHeuristic(state, problem):
     length = abs(corners[0][0] - corners[1][0]) + abs(corners[0][1] - corners[1][1])
     breadth = abs(corners[1][0] - corners[2][0]) + abs(corners[1][1] - corners[2][1])
     print length * breadth
-    return heuristic_value + len(unvisited_corner)* (length * breadth / 2) #length ^ 2# the key parameter
+    return heuristic_value + len(unvisited_corner)# * (length * breadth / 2) #length ^ 2# the key parameter,however if it bigger than 1 ,the heuristic function would not be consistent
 
 
 
@@ -556,14 +556,14 @@ def foodHeuristic(state, problem):
     position, foodGrid = state
     "*** YOUR CODE HERE ***"
     reward = 1
-    food_list = foodGrid.asList()
+    food_list = foodGrid.asList()[:]
     manhattan_value = 0
 
     # eaten_food_list = [pos for pos in problem.start_food_list if pos not in food_list]   #start problem.star_food_list should be changed to problem.start[1].asList()
     for pos in food_list:
         manhattan_value +=  util.manhattanDistance(pos, position)
 
-    h = manhattan_value + reward * len(food_list)
+    h = manhattan_value + reward * len(food_list) # if reward > 1 ,the heuristicfunction would not be consistent
     return h
 
 class ClosestDotSearchAgent(SearchAgent):
