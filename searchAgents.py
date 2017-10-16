@@ -479,6 +479,7 @@ class FoodSearchProblem:
     """
     def __init__(self, startingGameState):
         self.start = (startingGameState.getPacmanPosition(), startingGameState.getFood())
+        self.start_food_list = self.start[1].asList()
         self.walls = startingGameState.getWalls()
         self.startingGameState = startingGameState
         self._expanded = 0 # DO NOT CHANGE
@@ -554,7 +555,16 @@ def foodHeuristic(state, problem):
     """
     position, foodGrid = state
     "*** YOUR CODE HERE ***"
-    return 0
+    reward = 1
+    food_list = foodGrid.asList()
+    manhattan_value = 0
+
+    # eaten_food_list = [pos for pos in problem.start_food_list if pos not in food_list]   #start problem.star_food_list should be changed to problem.start[1].asList()
+    for pos in food_list:
+        manhattan_value +=  util.manhattanDistance(pos, position)
+
+    h = manhattan_value + reward * len(food_list)
+    return h
 
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"
