@@ -262,9 +262,6 @@ def euclideanHeuristic(position, problem, info={}):
     xy2 = problem.goal
     return ( (xy1[0] - xy2[0]) ** 2 + (xy1[1] - xy2[1]) ** 2 ) ** 0.5
 
-#####################################################
-# This portion is incomplete.  Time to write code!  #
-#####################################################
 
 class CornersProblem(search.SearchProblem):
     """
@@ -289,6 +286,7 @@ class CornersProblem(search.SearchProblem):
         # Please add any code here which you would like to use
         # in initializing the problem
         "*** YOUR CODE HERE ***"
+        self.gameState = startingGameState
         # self._visited, self._visitedlist = {}, [] # DO NOT CHANGE
         # self._visited_corners = dict([(corner, 0) for corner in self.corners])
 
@@ -318,6 +316,7 @@ class CornersProblem(search.SearchProblem):
             if not place in visitedCorner:
                 visitedCorner.append(place)
             return len(visitedCorner) == 4
+        print visitedCorner, "!!!!!!!!!!!"
         return False
 
         util.raiseNotDefined()
@@ -416,23 +415,49 @@ def cornersHeuristic(state, problem):
     !!!!!!!!!!!!!!!!!!!!!!!!!!'''
     import util
     place = state[0]
-    heuristic_value = 9999999
-    visited_corners = state[1]
-    unvisited_corner = [corner for corner in corners if corner not in visited_corners]
-    for corner in unvisited_corner:
-        heuristic_value = min(heuristic_value, abs(place[0] - corner[0]) + abs(place[1] - corner[1]))
-        # print "heurisvvvvv", heuristic_value
-        # if corner in visited_corners:
-        #     pass
-        '''next step is the key'''
-    if heuristic_value == 9999999:
-        heuristic_value = 0
-    # print heuristic_value,"+    ",len(unvisited_corner)
-    length = abs(corners[0][0] - corners[1][0]) + abs(corners[0][1] - corners[1][1])
-    breadth = abs(corners[1][0] - corners[2][0]) + abs(corners[1][1] - corners[2][1])
-    print length * breadth
-    return heuristic_value + len(unvisited_corner)# * (length * breadth / 2) #length ^ 2# the key parameter,however if it bigger than 1 ,the heuristic function would not be consistent
+    # heuristic_value = 9999999
+    visited_corners = state[1][:]
+    unvisited_corners = [corner for corner in corners if corner not in visited_corners]
+    return mazeDistenceOfDots(place, unvisited_corners)#heuristic_value +  300 *  len(unvisited_corner)# * (length * breadth / 2) #length ^ 2# the key parameter,however if it bigger than 1 ,the heuristic function would not be consistent
+    # for corner in unvisited_corner:
+    #     heuristic_value = min(heuristic_value, abs(place[0] - corner[0]) + abs(place[1] - corner[1]))
+    #     # print "heurisvvvvv", heuristic_value
+    #     # if corner in visited_corners:
+    #     #     pass
+    #     '''next step is the key'''
+    # if heuristic_value == 9999999:
+    #     heuristic_value = 0
+    # # print heuristic_value,"+    ",len(unvisited_corner)
+    # length = abs(corners[0][0] - corners[1][0]) + abs(corners[0][1] - corners[1][1])
+    # breadth = abs(corners[1][0] - corners[2][0]) + abs(corners[1][1] - corners[2][1])
+    # # print length * breadth
 
+    # currentState = state[0]
+    score = 0
+
+    # find unvisited corners
+    unvistedList = list()
+    for corner in corners:
+        unvistedList.append(corner)
+        if corner in state[1]:
+            unvistedList.remove(corner)
+
+    # repeats for all unvisited corners
+    for r in range(len(unvistedList)):
+        smallestManhattan = 99999
+
+        # calculate distance to nearest corner
+        for unvistedCorner in unvistedList:
+            dist = util.manhattanDistance(currentState, unvistedCorner)
+            if dist < smallestManhattan:
+                smallestManhattan = dist  # set distance to nearest corner
+                nearestCorner = unvistedCorner
+
+        score += smallestManhattan  # add distance to score
+        unvistedList.remove(nearestCorner)  # removes corner from unvisited list
+        currentState = nearestCorner  # updates position to the nearest corner
+
+    return score
 
 
 
@@ -484,7 +509,7 @@ class FoodSearchProblem:
         self.startingGameState = startingGameState
         self._expanded = 0 # DO NOT CHANGE
         self.heuristicInfo = {} # A dictionary for the heuristic to store information
-
+        self.gameState = startingGameState
     def getStartState(self):
         return self.start
 
@@ -555,16 +580,19 @@ def foodHeuristic(state, problem):
     """
     position, foodGrid = state
     "*** YOUR CODE HERE ***"
-    reward = 1
+    # reward = 100dd0
     food_list = foodGrid.asList()[:]
-    manhattan_value = 0
+    # manhattan_value = 0
+    #
+    # # eaten_food_list = [pos for pos in problem.start_food_list if pos not in food_list]   #start problem.star_food_list should be changed to problem.start[1].asList()
+    # for pos in food_list:
+    #     manhattan_value +=  util.manhattanDistance(pos, position)
+    #
+    # h = manhattan_value + reward * len(food_list) # if reward > 1 ,the heuristicfunction would not be consistent
+    # # print h
+    return mazeDistenceOfDots(position, food_list,problem)
 
-    # eaten_food_list = [pos for pos in problem.start_food_list if pos not in food_list]   #start problem.star_food_list should be changed to problem.start[1].asList()
-    for pos in food_list:
-        manhattan_value +=  util.manhattanDistance(pos, position)
 
-    h = manhattan_value + reward * len(food_list) # if reward > 1 ,the heuristicfunction would not be consistent
-    return h
 
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"
@@ -653,3 +681,19 @@ def mazeDistance(point1, point2, gameState):
     assert not walls[x2][y2], 'point2 is a wall: ' + str(point2)
     prob = PositionSearchProblem(gameState, start=point1, goal=point2, warn=False, visualize=False)
     return len(search.bfs(prob))
+
+def mazeDistenceOfDots(place, dots, problem):
+    distence = 9999999999
+    if dots == []:
+        return 0
+    for dot in dots:
+        temp_distence =  mazeDistance(place, dot, problem.gameState)
+        # temp_distence =  util.manhattanDistance(place, dot)
+        if temp_distence < distence:
+            distence = temp_distence
+            nearst_dot = dot
+    print nearst_dot, dots
+    dots.remove(nearst_dot)
+
+    return distence + mazeDistenceOfDots(nearst_dot, dots, problem)
+
