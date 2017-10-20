@@ -138,32 +138,60 @@ def breadthFirstSearch(problem):
     #
     # BFS(root_nodes)
     # BFS(problem.getStartState)
-    #
+    #jjjjjjj
     current_node = [problem.getStartState(), []]
-    frontier = Queue.Queue()
-    frontier.put(current_node)
-    explored = set()
+    frontier = util.Queue()
+    frontier.push(current_node)
+    explored = []
     successor = None
     if problem.isGoalState(current_node[0]):
         return current_node[1]
+    # while True:
+    #
+    #     if problem.isGoalState(current_place):
+    #         return current_path
+    #     if frontier.isEmpty():
+    #         return None
+    #     current_node = frontier.pop()
+    #     current_place = current_node[0]
+    #     current_path = current_node[1]
+    #     successor = problem.getSuccessors(current_place)
+    #     for node  in successors:
+    #
+    #         node_place = node[0]
+    #         node_action = node[1]
+    #         frontier.push((node_place, current_path + [node_action]))
+    #
+    #     # print current_node
+    #     # for node in successor:
+    #         # if (node_place not in explored) :
+    #         #     if node_place not in [x[0] for x in frontier.__iter__()]:
+    #         #         frontier.push( (node_place, current_path + [node_action]))
+    #     explored.add(current_place)
+    #
+    # util.raiseNotDefined()
+    temp = None
+    explored.append(problem.getStartState())
     while True:
-        if frontier.empty():
-            return None
-        current_node = frontier.get()
-        current_place = current_node[0]
         current_path = current_node[1]
+        current_place = current_node[0]
+
         if problem.isGoalState(current_place):
             return current_path
-        explored.add(current_place)
-        successor = problem.getSuccessors(current_place)
-        # print current_node
-        for node in successor:
-            node_place = node[0]
-            node_action = node[1]
-            if node_place not in explored:
-                frontier.put( (node_place, current_path + [node_action]))
 
-    util.raiseNotDefined()
+        successors = problem.getSuccessors(current_place)
+        for temp in successors:
+            frontier.push((temp[0], current_path + [temp[1]]))
+
+        while(True):
+            if (frontier.isEmpty()):
+                return None
+            temp = frontier.pop()
+            if temp[0] not in explored:
+                break
+        current_node = temp
+        explored.append(temp[0])
+    return current_node[1]
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first
@@ -182,6 +210,60 @@ def uniformCostSearch(problem):
     import util
     print problem
 
+    current_node = [problem.getStartState(), [], 0]
+    frontier = util.PriorityQueue()
+    # frontier.push(current_node)
+    explored = set()
+    successor = None
+    if problem.isGoalState(current_node[0]):
+        return current_node[1]
+    explored.add(current_node[0])
+    # while True:
+    #
+    #     if problem.isGoalState(current_place):
+    #         return current_path
+    #     if frontier.isEmpty():
+    #         return None
+    #     current_node = frontier.pop()
+    #     current_place = current_node[0]
+    #     current_path = current_node[1]
+    #     successor = problem.getSuccessors(current_place)
+    #     for node  in successors:
+    #
+    #         node_place = node[0]
+    #         node_action = node[1]
+    #         frontier.push((node_place, current_path + [node_action]))
+    #
+    #     # print current_node
+    #     # for node in successor:
+    #         # if (node_place not in explored) :
+    #         #     if node_place not in [x[0] for x in frontier.__iter__()]:
+    #         #         frontier.push( (node_place, current_path + [node_action]))
+    #     explored.add(current_place)
+    #
+    # util.raiseNotDefined()
+    temp = None
+    explored.add(problem.getStartState())
+    while True:
+        current_path = current_node[1]
+        current_place = current_node[0]
+        current_cost = current_node[2]
+        if problem.isGoalState(current_place):
+            return current_path
+
+        successors = problem.getSuccessors(current_place)
+        for temp in successors:
+            frontier.push((temp[0], current_path + [temp[1]], current_cost + temp[2]), current_cost + temp[2])
+
+        while(True):
+            if (frontier.isEmpty()):
+                return None
+            temp = frontier.pop()
+            if temp[0] not in explored:
+                break
+        current_node = list(temp) + [temp[2]]
+        explored.add(temp[0])
+    return current_node[1]
     #
     # import Queue
     # root_nodes =(problem.getStartState(), [])
@@ -202,7 +284,7 @@ def uniformCostSearch(problem):
     if problem.isGoalState(current_node[0]):
         return current_node[1]
     while True:
-        
+
         # print frontier
         if frontier.isEmpty():
             break
@@ -225,7 +307,7 @@ def uniformCostSearch(problem):
                     # print problem.getCostOfActions(path)
     # print min_cost_path
     return min_cost_path
-    
+
     util.raiseNotDefined()
 
 def nullHeuristic(state, problem=None):
@@ -238,45 +320,65 @@ def nullHeuristic(state, problem=None):
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
-
-    import searchAgents
-    import util
-
-    def f(path, place):
-        return len(path) + heuristic(place, problem)
-    current_node = [problem.getStartState(), []]
-    frontier = util.PriorityQueue()
-    frontier.push(current_node,f([],current_node[0]))
+    #
+    # import searchAgents
+    # import util
+    #
+    # def f(path, place):
+    #     return len(path) + heuristic(place, problem)
+    # current_node = [problem.getStartState(), []]
+    # frontier = util.PriorityQueue()
+    # frontier.push(current_node,f([],current_node[0]))
+    # explored = []
+    # successor = None
+    # min_cost_path = []
+    # if problem.isGoalState(current_node[0]):
+    #     return current_node[1]
+    # while True:
+    #
+    #     # print frontier
+    #     if frontier.isEmpty():
+    #         break
+    #     current_node = frontier.pop()
+    #     current_place = current_node[0]
+    #     current_path = current_node[1]
+    #     if problem.isGoalState(current_place):
+    #         min_cost_path = current_path
+    #     explored.append(current_place)
+    #     if min_cost_path == []:
+    #         successor = problem.getSuccessors(current_place)
+    #         # print current_node
+    #         for node in successor:
+    #             node_place = node[0]
+    #             node_action = node[1]
+    #             if node_place not in explored:
+    #                 path = current_path + [node_action]
+    #                 # print path
+    #                 frontier.update((node_place, path), f(path, node_place))
+    #                 # print problem.getCostOfActions(path)
+    # # print min_cost_path
+    # return min_cost_path
+    fringe = util.PriorityQueue()
+    current_state = [problem.getStartState(), [], 0]
+    successors = None
     explored = []
-    successor = None
-    min_cost_path = []
-    if problem.isGoalState(current_node[0]):
-        return current_node[1]
-    while True:
+    item = None
+    explored.append(problem.getStartState())
+    while not problem.isGoalState(current_state[0]):
 
-        # print frontier
-        if frontier.isEmpty():
-            break
-        current_node = frontier.pop()
-        current_place = current_node[0]
-        current_path = current_node[1]
-        if problem.isGoalState(current_place):
-            min_cost_path = current_path
-        explored.append(current_place)
-        if min_cost_path == []:
-            successor = problem.getSuccessors(current_place)
-            # print current_node
-            for node in successor:
-                node_place = node[0]
-                node_action = node[1]
-                if node_place not in explored:
-                    path = current_path + [node_action]
-                    # print path
-                    frontier.update((node_place, path), f(path, node_place))
-                    # print problem.getCostOfActions(path)
-    # print min_cost_path
-    return min_cost_path
-
+        (current_pos, directions, cost) = current_state
+        successors = problem.getSuccessors(current_pos)
+        for item in successors:
+            fringe.push((item[0], directions + [item[1]], cost + item[2]), cost + item[2] + heuristic(item[0], problem))
+        while (True):
+            if (fringe.isEmpty()):
+                return None
+            item = fringe.pop()
+            if item[0] not in explored:
+                break
+        current_state = (item[0], item[1], item[2])
+        explored.append(item[0])
+    return current_state[1]
 
 
 

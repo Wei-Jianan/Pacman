@@ -316,7 +316,7 @@ class CornersProblem(search.SearchProblem):
             if not place in visitedCorner:
                 visitedCorner.append(place)
             return len(visitedCorner) == 4
-        print visitedCorner, "!!!!!!!!!!!"
+        # print visitedCorner, "!!!!!!!!!!!"
         return False
 
         util.raiseNotDefined()
@@ -405,58 +405,39 @@ def cornersHeuristic(state, problem):
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
 
     "*** YOUR CODE HERE ***"
-    '''space to optimize!!!!!!!!!!!!!!!!!
-    
-    
-    
-    
-    
-    
-    !!!!!!!!!!!!!!!!!!!!!!!!!!'''
+    '''space to optimize!!!!!!!!!!!!!!!!!'''
     import util
     place = state[0]
     # heuristic_value = 9999999
     visited_corners = state[1][:]
     unvisited_corners = [corner for corner in corners if corner not in visited_corners]
-    return mazeDistenceOfDots(place, unvisited_corners)#heuristic_value +  300 *  len(unvisited_corner)# * (length * breadth / 2) #length ^ 2# the key parameter,however if it bigger than 1 ,the heuristic function would not be consistent
-    # for corner in unvisited_corner:
-    #     heuristic_value = min(heuristic_value, abs(place[0] - corner[0]) + abs(place[1] - corner[1]))
-    #     # print "heurisvvvvv", heuristic_value
-    #     # if corner in visited_corners:
-    #     #     pass
-    #     '''next step is the key'''
-    # if heuristic_value == 9999999:
-    #     heuristic_value = 0
-    # # print heuristic_value,"+    ",len(unvisited_corner)
-    # length = abs(corners[0][0] - corners[1][0]) + abs(corners[0][1] - corners[1][1])
-    # breadth = abs(corners[1][0] - corners[2][0]) + abs(corners[1][1] - corners[2][1])
-    # # print length * breadth
+    value = mazeDistenceOfDots2(place, unvisited_corners, problem)
+    print value
+    return value #heuristic_value +  300 *  len(unvisited_corner)# * (length * breadth / 2) #length ^ 2# the key parameter,however if it bigger than 1 ,the heuristic function would not be consistent
+    for corner in unvisited_corner:
+        heuristic_value = min(heuristic_value, abs(place[0] - corner[0]) + abs(place[1] - corner[1]))
+        # print "heurisvvvvv", heuristic_value
+        # if corner in visited_corners:
+        #     pass
+        '''next step is the key'''
+    if heuristic_value == 9999999:
+        heuristic_value = 0
+    # print heuristic_value,"+    ",len(unvisited_corner)
+    length = abs(corners[0][0] - corners[1][0]) + abs(corners[0][1] - corners[1][1])
+    breadth = abs(corners[1][0] - corners[2][0]) + abs(corners[1][1] - corners[2][1])
+    # print length * breadth
 
     # currentState = state[0]
     score = 0
-
-    # find unvisited corners
-    unvistedList = list()
-    for corner in corners:
-        unvistedList.append(corner)
-        if corner in state[1]:
-            unvistedList.remove(corner)
-
-    # repeats for all unvisited corners
-    for r in range(len(unvistedList)):
-        smallestManhattan = 99999
-
-        # calculate distance to nearest corner
-        for unvistedCorner in unvistedList:
-            dist = util.manhattanDistance(currentState, unvistedCorner)
-            if dist < smallestManhattan:
-                smallestManhattan = dist  # set distance to nearest corner
-                nearestCorner = unvistedCorner
-
-        score += smallestManhattan  # add distance to score
-        unvistedList.remove(nearestCorner)  # removes corner from unvisited list
-        currentState = nearestCorner  # updates position to the nearest corner
-
+        #
+        #     dist = util.manhattanDistance(currentState, unvistedCorner)
+        #     if dist < smallestManhattan:
+        #         smallestManhattan = dist
+        #         nearestCorner = unvistedCorner
+        #
+        # score += smallestManhattan
+        # unvistedList.remove(nearestCorner)  # r
+        # currentState = nearestCorner
     return score
 
 
@@ -510,6 +491,14 @@ class FoodSearchProblem:
         self._expanded = 0 # DO NOT CHANGE
         self.heuristicInfo = {} # A dictionary for the heuristic to store information
         self.gameState = startingGameState
+        # self.longest_distence = self.getLongestDistance()
+        # self.shrink = mazeDistenceOfDots2(self.start[0], self.start_food_list, self)/ float(self.longest_distence)
+    def getLongestDistance(self):
+        distance = 0
+        for dot in self.start_food_list:
+            distance = max(distance, mazeDistance(self.start[0],dot, self.startingGameState))
+        print distance , '???????????????????????'
+        return distance
     def getStartState(self):
         return self.start
 
@@ -682,7 +671,7 @@ def mazeDistance(point1, point2, gameState):
     prob = PositionSearchProblem(gameState, start=point1, goal=point2, warn=False, visualize=False)
     return len(search.bfs(prob))
 
-def mazeDistenceOfDots(place, dots, problem):
+def mazeDistenceOfDots2(place, dots, problem):
     distence = 9999999999
     if dots == []:
         return 0
@@ -692,8 +681,19 @@ def mazeDistenceOfDots(place, dots, problem):
         if temp_distence < distence:
             distence = temp_distence
             nearst_dot = dot
-    print nearst_dot, dots
+    # print nearst_dot, dots
     dots.remove(nearst_dot)
 
-    return distence + mazeDistenceOfDots(nearst_dot, dots, problem)
+    return distence  + mazeDistenceOfDots2(nearst_dot, dots, problem)
 
+def mazeDistenceOfDots(place, dots, problem):
+    # nums = len(dots)
+    value =     mazeDistenceOfDots2(place, dots, problem)
+    # print value
+    # shrink = problem.shrink
+    if value == 0:
+        return 0
+    # print shrink
+    # value = value / float(shrink) * len(dots) #/ shrink ) , '!!!!!!!!!!!!!!!!'
+    print value
+    return value
