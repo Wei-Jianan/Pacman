@@ -41,6 +41,7 @@ class ReflexAgent(Agent):
         # Collect legal moves and successor states
         legalMoves = gameState.getLegalActions()
 
+        legalMoves.remove("Stop")#attention this is for test!!!!!
         # Choose one of the best actions
         scores = [self.evaluationFunction(gameState, action) for action in legalMoves]
         bestScore = max(scores)
@@ -48,6 +49,9 @@ class ReflexAgent(Agent):
         chosenIndex = random.choice(bestIndices) # Pick randomly among the best
 
         "Add more of your code here if you want to"
+        # stopActionIndix =  legalMoves.index("Stop")
+        # bestIndices.remove(stopActionIndix)
+        # chosenIndex = random.choice(bestIndices) # Pick randomly among the best
 
         return legalMoves[chosenIndex]
 
@@ -74,7 +78,33 @@ class ReflexAgent(Agent):
         newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]
 
         "*** YOUR CODE HERE ***"
-        return successorGameState.getScore()
+        ##figure out the final issue why the pacman could stop, but I nned to implement a BFS to find
+        # a shortest way to the nearest food.
+        import util
+        import math
+        newGhostPositions = [gostState.getPosition() for gostState in newGhostStates]
+        foodList = newFood.asList()
+        def ghostFuc(place, opponentPlaces):
+            distanceValue = 0
+            for opponentPlace in opponentPlaces:
+                # n += 1
+                distanceValue += math.e ** (-1 * util.manhattanDistance(place, opponentPlace)) * 22
+            return -distanceValue
+        def foodFunc(place, foodPlaces):
+            if len(foodPlaces) == 0:
+                return 0
+            distance = 9999999
+            for foodPlace in foodPlaces:
+                tempDistence = util.manhattanDistance(place, foodPlace)
+                if tempDistence < distance:
+                    distance = tempDistence
+                    nextPlace = foodPlace
+            foodPlaces.remove(nextPlace)
+            return -1 * distance + foodFunc(nextPlace, foodPlaces)
+
+
+
+        return ghostFuc(newPos, newGhostPositions) + foodFunc(newPos, foodList)
 
 def scoreEvaluationFunction(currentGameState):
     """
