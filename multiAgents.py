@@ -160,17 +160,19 @@ class MinimaxAgent(MultiAgentSearchAgent):
         """
         "*** YOUR CODE HERE ***"
         nGhosts = gameState.getNumAgents() - 1
-
         ifGhost = 1
         if nGhosts == 0:
             ifGhost = 0
 
-        def maxValue(gameState, depth):
+        def maxValue(gameState, depth,n_Ghost = 0):
             if depth == 0:
                 return self.evaluationFunction(gameState)
             legalMoves = gameState.getLegalActions(0)
             successorGameStates = [gameState.generateSuccessor(0, action) for action in legalMoves]
             maxScore = -99999999
+
+            if successorGameStates == []:
+                return self.evaluationFunction(gameState)
 
             for successorGameState in successorGameStates:
                 maxScore = max(maxScore, minValue(successorGameState, depth, ifGhost ))
@@ -179,14 +181,17 @@ class MinimaxAgent(MultiAgentSearchAgent):
 
         def minValue(gameState, depth, nth_Ghost):
             if nth_Ghost == 0:
-                return maxValue(gameState, depth -1)
+                return maxValue(gameState, depth -1,         nth_Ghost)#!!!!!!!!!!!!!!!!!!!!!!!!!!attention  to delate the parameter
 
             legalMoves = gameState.getLegalActions(nth_Ghost)
             successorGameStates = [gameState.generateSuccessor(nth_Ghost, action) for action in legalMoves]
             minScore = 99999999
+            if successorGameStates == []:
+                return self.evaluationFunction(gameState)
+
             if nth_Ghost == nGhosts:
                 for successorGameState in successorGameStates:
-                    minScore = min(minScore, maxValue(successorGameState, depth - 1))
+                    minScore = min(minScore, maxValue(successorGameState, depth - 1,))
                 return minScore
             else:
                 for successorGameState in successorGameStates:
