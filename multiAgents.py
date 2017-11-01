@@ -234,7 +234,7 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
                 print _score,
                 return _score
             legalMoves = gameState.getLegalActions(0)
-            # successorGameStates = [gameState.generateSuccessor(0, action) for action in legalMoves]
+            successorGameStates = [gameState.generateSuccessor(0, action) for action in legalMoves]
             maxScore = -99999999
 
             if successorGameStates == []:
@@ -242,10 +242,7 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
                 print _score,
                 return  _score
 
-            # for successorGameState in successorGameStates:
-
-            for action in legalMoves:
-                successorGameState = gameState.generateSuccessor(0, action)
+            for successorGameState in successorGameStates:
                 maxScore = max(maxScore, minValue(successorGameState, alpha, beta , depth, ifGhost))
                 if maxScore >= beta:
                     return maxScore
@@ -258,7 +255,7 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
                 return maxValue(gameState, depth -1,         nth_Ghost)#!!!!!!!!!!!!!!!!!!!!!!!!!!attention  to delate the parameter
 
             legalMoves = gameState.getLegalActions(nth_Ghost)
-            # successorGameStates = [gameState.generateSuccessor(nth_Ghost, action) for action in legalMoves]
+            successorGameStates = [gameState.generateSuccessor(nth_Ghost, action) for action in legalMoves]
             minScore = 99999999
             if successorGameStates == []:
                 _score =  self.evaluationFunction(gameState)
@@ -267,18 +264,14 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
 
 
             if nth_Ghost == nGhosts:
-                for action in legalMoves:
-                    successorGameState = gameState.generateSuccessor(nth_Ghost, action)
-
+                for successorGameState in successorGameStates:
                     minScore = min(minScore, maxValue(successorGameState, alpha, beta, depth - 1))
                     if minScore <= alpha:
                         return minScore
                     beta = min(beta, minScore)
                 return minScore
             else:
-                for action in legalMoves:
-                    successorGameState = gameState.generateSuccessor(nth_Ghost, action)
-
+                for successorGameState in successorGameStates:
                     minScore = min(minScore, minValue(successorGameState, alpha, beta, depth, nth_Ghost +1))
                     if minScore <= alpha:
                         return minScore
