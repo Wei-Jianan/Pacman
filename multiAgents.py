@@ -312,7 +312,70 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
           legal moves.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+
+        nGhosts = gameState.getNumAgents() - 1
+        ifGhost = 1
+        if nGhosts == 0:
+            ifGhost = 0
+
+        def maxValue(gameState,depth,n_Ghost = 0):
+            if depth == 0:
+                _score =  self.evaluationFunction(gameState)
+                print _score,
+                return _score
+            legalMoves = gameState.getLegalActions(0)
+            # successorGameStates = [gameState.generateSuccessor(0, action) for action in legalMoves]
+            maxScore = -99999999
+
+            if legalMoves == []:
+                _score = self.evaluationFunction(gameState)
+                print _score,
+                return  _score
+
+            # for successorGameState in successorGameStates:
+            for action in legalMoves:
+                successorGameState = gameState.generateSuccessor(0, action)
+                maxScore = max(maxScore, randomValue(successorGameState,  depth, ifGhost))
+            return maxScore
+
+
+        def randomValue(gameState, depth, nth_Ghost):
+            if nth_Ghost == 0:
+                return maxValue(gameState, depth -1,         nth_Ghost)#!!!!!!!!!!!!!!!!!!!!!!!!!!attention  to delate the parameter
+
+            legalMoves = gameState.getLegalActions(nth_Ghost)
+            # successorGameStates = [gameState.generateSuccessor(nth_Ghost, action) for action in legalMoves]
+            randomScore = 0
+            if legalMoves == []:
+                _score =  self.evaluationFunction(gameState)
+                print _score,
+                return _score
+
+
+            if nth_Ghost == nGhosts:
+                for action in legalMoves:
+                    successorGameState = gameState.generateSuccessor(nth_Ghost, action)
+                    randomScore +=  maxValue(successorGameState, depth - 1) / float(len(legalMoves))
+                return randomScore
+            else:
+                for action in legalMoves:
+                    successorGameState = gameState.generateSuccessor(nth_Ghost, action)
+                    randomScore += randomValue(successorGameState, depth, nth_Ghost +1) / float(len(legalMoves))
+                return randomScore
+
+        legalMoves = gameState.getLegalActions(0)
+        # successorGameStates = [gameState.generateSuccessor(0, action) for action in legalMoves]
+        maxScore =  -999999
+        i = 0
+        for action  in legalMoves:
+            successorGameState = gameState.generateSuccessor(0, action)
+            Score = max(maxScore, randomValue(successorGameState, self.depth, ifGhost))
+            if maxScore <  Score:
+                maxScore =  Score
+                action_ = legalMoves[i]
+
+            i += 1
+        return action_
 
 def betterEvaluationFunction(currentGameState):
     """
@@ -322,8 +385,35 @@ def betterEvaluationFunction(currentGameState):
       DESCRIPTION: <write something here so we know what you did>
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    import util
+    import math
+    # currentGameState = currentGameState.generatePacmanSuccessor(action)
+    newPos = currentGameState.getPacmanPosition()
+    newFood = currentGameState.getFood()
+    newGhostStates = currentGameState.getGhostStates()
+    # newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]
+    newGhostPositions = [gostState.getPosition() for gostState in newGhostStates]
+    foodList = newFood.asList()
 
+    def ghostFuc(place, opponentPlaces):
+        distanceValue = 0
+        for opponentPlace in opponentPlaces:
+            # n += 1
+            distanceValue += math.e ** (-1 * util.manhattanDistance(place, opponentPlace)) * 22
+        return -distanceValue
+
+    def foodFunc(place, foodPlaces):
+        if len(foodPlaces) == 0:
+            return 0
+        distance = 9999999
+        for foodPlace in foodPlaces:
+            tempDistence = util.manhattanDistance(place, foodPlace)
+            if tempDistence < distance:
+                distance = tempDistence
+                nextPlace = foodPlace
+        foodPlaces.remove(nextPlace)
+        return -1 * distance + foodFunc(nextPlace, foodPlaces)
+
+    return ghostFuc(newPos, newGhostPositions) + foodFunc(newPos, foodList)
 # Abbreviation
 better = betterEvaluationFunction
-
