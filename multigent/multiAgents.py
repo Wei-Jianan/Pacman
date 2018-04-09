@@ -231,7 +231,7 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
         def maxValue(gameState, alpha, beta ,depth,n_Ghost = 0):
             if depth == 0:
                 _score =  self.evaluationFunction(gameState)
-                print _score,
+                # print _score,
                 return _score
             legalMoves = gameState.getLegalActions(0)
             # successorGameStates = [gameState.generateSuccessor(0, action) for action in legalMoves]
@@ -239,7 +239,7 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
 
             if legalMoves == []:
                 _score = self.evaluationFunction(gameState)
-                print _score,
+                # print _score,
                 return  _score
 
             # for successorGameState in successorGameStates:
@@ -261,7 +261,7 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
             minScore = 99999999
             if legalMoves == []:
                 _score =  self.evaluationFunction(gameState)
-                print _score,
+                # print _score,
                 return _score
 
 
@@ -321,7 +321,7 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
         def maxValue(gameState,depth,n_Ghost = 0):
             if depth == 0:
                 _score =  self.evaluationFunction(gameState)
-                print _score,
+                # print _score,
                 return _score
             legalMoves = gameState.getLegalActions(0)
             # successorGameStates = [gameState.generateSuccessor(0, action) for action in legalMoves]
@@ -329,7 +329,7 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
 
             if legalMoves == []:
                 _score = self.evaluationFunction(gameState)
-                print _score,
+                # print _score,
                 return  _score
 
             # for successorGameState in successorGameStates:
@@ -348,7 +348,7 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
             randomScore = 0
             if legalMoves == []:
                 _score =  self.evaluationFunction(gameState)
-                print _score,
+                # print _score,
                 return _score
 
 
